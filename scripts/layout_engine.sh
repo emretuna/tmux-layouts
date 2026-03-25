@@ -18,6 +18,13 @@ pane_count() {
 window_width()  { tmux display-message -t "$1" -p '#{window_width}'  2>/dev/null; }
 window_height() { tmux display-message -t "$1" -p '#{window_height}' 2>/dev/null; }
 
+# Read leader pane percentage from option, convert to decimal ratio
+get_leader_ratio() {
+  percentage=$(tmux show-option -gqv "@tmux_layouts_leader_pane_percentage")
+  percentage="${percentage:-65}"
+  awk "BEGIN{printf \"%.2f\", $percentage / 100}"
+}
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  VSTACK
 #  One main pane left, vertical stack on the right.
@@ -76,16 +83,16 @@ layout_hstack() {
 #  SPIRAL
 #  Each new pane splits the previous one, alternating vertical / horizontal.
 #  The spiral structure is created by the split sequence in new_pane.sh.
-#  Resize first pane to 65% width.
 # ─────────────────────────────────────────────────────────────────────────────
 layout_spiral() {
   window="$1"
+  main_ratio="${2:-0.65}"
   panes=$(get_panes "$window")
   n=$(echo "$panes" | wc -l | tr -d ' ')
   [ "$n" -le 1 ] && return
 
   W=$(window_width "$window")
-  main_w=$(awk "BEGIN{printf \"%d\", $W * 0.65}")
+  main_w=$(awk "BEGIN{printf \"%d\", $W * $main_ratio}")
 
   first_pane=$(echo "$panes" | head -1)
   tmux resize-pane -t "$first_pane" -x "$main_w" 2>/dev/null
@@ -97,9 +104,10 @@ layout_spiral() {
 apply_layout() {
   layout="$1"
   window="$2"
+  ratio=$(get_leader_ratio)
   case "$layout" in
-    vstack) layout_vstack "$window" ;;
-    hstack) layout_hstack "$window" ;;
-    spiral) layout_spiral "$window" ;;
+    vstack) layout_vstack "$window" "$ratio" ;;
+    hstack) layout_hstack "$window" "$ratio" ;;
+    spiral) layout_spiral "$window" "$ratio" ;;
   esac
 }
