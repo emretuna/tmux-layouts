@@ -30,7 +30,7 @@ window_height() { tmux display-message -t "$1" -p '#{window_height}' 2>/dev/null
 # ─────────────────────────────────────────────────────────────────────────────
 layout_vstack() {
   window="$1"
-  main_ratio="${2:-0.5}"
+  main_ratio="${2:-0.65}"
 
   panes=$(get_panes "$window")
   n=$(echo "$panes" | wc -l | tr -d ' ')
@@ -57,7 +57,7 @@ layout_vstack() {
 # ─────────────────────────────────────────────────────────────────────────────
 layout_hstack() {
   window="$1"
-  main_ratio="${2:-0.5}"
+  main_ratio="${2:-0.65}"
 
   panes=$(get_panes "$window")
   n=$(echo "$panes" | wc -l | tr -d ' ')
@@ -76,14 +76,19 @@ layout_hstack() {
 #  SPIRAL
 #  Each new pane splits the previous one, alternating vertical / horizontal.
 #  The spiral structure is created by the split sequence in new_pane.sh.
-#  Do nothing here to preserve the split-created arrangement.
+#  Resize first pane to 65% width.
 # ─────────────────────────────────────────────────────────────────────────────
 layout_spiral() {
   window="$1"
   panes=$(get_panes "$window")
   n=$(echo "$panes" | wc -l | tr -d ' ')
   [ "$n" -le 1 ] && return
-  # Do nothing - the spiral is created by split sequence
+
+  W=$(window_width "$window")
+  main_w=$(awk "BEGIN{printf \"%d\", $W * 0.65}")
+
+  first_pane=$(echo "$panes" | head -1)
+  tmux resize-pane -t "$first_pane" -x "$main_w" 2>/dev/null
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
