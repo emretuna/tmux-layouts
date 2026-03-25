@@ -142,6 +142,22 @@ set -g @tmux_layouts_select_lower_on_close "false"
 
 ---
 
+### Leader pane size
+
+Configure the size of the first (leader) pane as a percentage of the window.
+
+```tmux
+# Default: 65%
+set -g @tmux_layouts_leader_pane_percentage "75"
+```
+
+This applies to all layouts:
+- `vstack`: first pane width
+- `hstack`: first pane height
+- `spiral`: first pane width
+
+---
+
 ### Complete example
 
 ```tmux
@@ -151,6 +167,9 @@ set -g @tmux_layouts_select_lower_on_close "false"
 set -g @tmux_layouts_default        "spiral"
 set -g @tmux_layouts_window_1       "vstack"
 set -g @tmux_layouts_window_2       "hstack"
+
+# Leader pane size (default: 65)
+set -g @tmux_layouts_leader_pane_percentage "75"
 
 # New-pane key (prefix + n)
 set -g @tmux_layouts_new_pane_key   "n"
