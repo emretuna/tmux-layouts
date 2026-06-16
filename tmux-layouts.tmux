@@ -51,7 +51,7 @@ fi
 
 if [ -n "$NEW_PANE_KEY" ]; then
   # Check if key is already bound
-  existing_binding=$(tmux list-keys -n "$NEW_PANE_KEY" 2>/dev/null)
+  existing_binding=$(tmux list-keys "$NEW_PANE_KEY" 2>/dev/null)
   if [ -z "$existing_binding" ] || echo "$existing_binding" | grep -q "$PLUGIN_DIR"; then
     tmux bind-key "$NEW_PANE_KEY" run-shell "\"$PLUGIN_DIR/scripts/new_pane.sh\""
   fi

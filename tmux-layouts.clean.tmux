@@ -13,14 +13,14 @@ PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NEW_PANE_KEY=$(tmux show-option -gqv "@tmux_layouts_new_pane_key" 2>/dev/null)
 [[ -z "$NEW_PANE_KEY" ]] && NEW_PANE_KEY="n"
 
-existing_binding=$(tmux list-keys -n "$NEW_PANE_KEY" 2>/dev/null)
+existing_binding=$(tmux list-keys "$NEW_PANE_KEY" 2>/dev/null)
 if [[ "$existing_binding" == *"$PLUGIN_DIR"* ]]; then
   tmux unbind-key "$NEW_PANE_KEY" 2>/dev/null
 fi
 
 # Clear all layout window options
-while IFS=: read -r session_name window_id; do
-  WIN_KEY="@tmux_layout_${window_id}"
+while IFS=: read -r _ window_id; do
+  WIN_KEY="@tmux_layouts_spiral_last"
   tmux set-option -w -u -t "$window_id" "$WIN_KEY" 2>/dev/null
 done < <(tmux list-windows -a -F '#{session_name}:#{window_id}' 2>/dev/null)
 

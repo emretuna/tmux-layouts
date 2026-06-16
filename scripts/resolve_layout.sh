@@ -24,7 +24,7 @@ resolve_layout() {
 
   # 2. Per-session-name (sanitise: replace non-alphanumeric chars with _)
   if [ -n "$session_name" ]; then
-    safe=$(echo "$session_name" | tr -c 'a-zA-Z0-9' '_')
+    safe=$(echo "$session_name" | tr -c 'a-zA-Z0-9_-' '_')
     layout=$(tmux show-option -gqv "@tmux_layouts_session_${safe}" 2>/dev/null)
     if [ -n "$layout" ]; then
       echo "$layout"

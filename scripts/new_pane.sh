@@ -39,9 +39,9 @@ case "$LAYOUT" in
     pane_count=$(tmux list-panes -t "$WINDOW" -F '#{pane_id}' 2>/dev/null | wc -l | tr -d ' ')
 
     if [ $((pane_count % 2)) -eq 1 ]; then
-      tmux split-window -h -t "$LAST_PANE" -c "#{pane_current_path}"
+      tmux split-window -h -t "$LAST_PANE"
     else
-      tmux split-window -v -t "$LAST_PANE" -c "#{pane_current_path}"
+      tmux split-window -v -t "$LAST_PANE"
     fi
     ;;
 
