@@ -40,8 +40,9 @@ add_hook_if_missing after-new-window   "run-shell '\"$PLUGIN_DIR/scripts/init_wi
 #    set -g @tmux_layouts_new_pane_key "|"    # custom
 #    set -g @tmux_layouts_new_pane_key ""     # disable; keep tmux defaults
 #
-#  If the key is already bound to something else, the plugin won't overwrite it
-#  (set to a different key or unbind manually first).
+#  Re-binds on every load; bind-key overwrites the prior binding, so
+#  re-sourcing tmux.conf creates no duplicates. To use a different key,
+#  set @tmux_layouts_new_pane_key (above); to keep tmux's default, set it to "".
 # ─────────────────────────────────────────────────────────────────────────────
 NEW_PANE_KEY=$(tmux show-option -gqv "@tmux_layouts_new_pane_key" 2>/dev/null)
 # If the option is not set at all, use "n" as the default
@@ -50,11 +51,7 @@ if [ -z "$(tmux show-option -gq "@tmux_layouts_new_pane_key" 2>/dev/null)" ]; th
 fi
 
 if [ -n "$NEW_PANE_KEY" ]; then
-  # Check if key is already bound
-  existing_binding=$(tmux list-keys "$NEW_PANE_KEY" 2>/dev/null)
-  if [ -z "$existing_binding" ] || echo "$existing_binding" | grep -q "$PLUGIN_DIR"; then
-    tmux bind-key "$NEW_PANE_KEY" run-shell "\"$PLUGIN_DIR/scripts/new_pane.sh\""
-  fi
+  tmux bind-key "$NEW_PANE_KEY" run-shell "\"$PLUGIN_DIR/scripts/new_pane.sh\""
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
